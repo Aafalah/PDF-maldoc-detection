@@ -195,7 +195,7 @@ You can find the maldocs we used in this tutorial in this repo.
 ## Disclaimer
 We created this tutorial as part of our paper submitted to **coming soon**.
 
-The work contains malicious file secured using the industry-standard password. Use at your own risk. We are not responsible for any damage caused by the misuse of these maldocs.
+The work contains malicious files secured using the industry-standard password. Use at your own risk. We are not responsible for any damage caused by the misuse of these maldocs.
 
 
 
