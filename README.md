@@ -1,6 +1,6 @@
 # PDF-maldoc-detection
 ###### A tutorial for detection PDF maldocs using open source tools
-We aim to help those who are starting their PDF maldoc analysis journey with the first steps they can take
+We aim to help those who are starting their PDF maldoc analysis journey with a tutorial that highlights some tools and techniques. 
 
 ## Analysis
 In this sction, we provide analysis of 3 PDF maldocs generated through Metasploit, which we frequently encountered during our analysis:
