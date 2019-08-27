@@ -3,7 +3,7 @@
 We aim to help those who are starting their PDF maldoc analysis journey with the first steps they can take
 
 ## Analysis
-In this sction, we provide analysis of 3 PDF maldocs generated through Metasploit.
+In this sction, we provide analysis of 3 PDF maldocs generated through Metasploit, which we frequently encountered during our analysis:
 - adobe_collectemailinfo
 - adobe_pdf_embedded_exe
 - adobe_pdf_embedded_exe_nojs
@@ -42,7 +42,6 @@ The analysis of this maldoc is now complete.
 
 You might encounter some JavaScript blocks that do not execute directly and might require some editing, such as the analysis traps we highlighted in our paper. 
 Also, some JavaScript blocks will not reveal the shellcode directly. You will have to modify then execute the code to reveal subsequent attack stages which contain the final payload/shellcode.
-
 
 ### EmbeddedFiles analysis
 There are 2 ways in which you can generate a *dropper* on Metasploit:
@@ -180,12 +179,9 @@ Once you have carved out the new file, you can follow the same steps from the pr
 
 This concludes the analysis in this of this maldoc.
 
-
-
 ## Distros
 
 The majority of our analysis was performed on tools that are preloaded on the [REMnux distro](https://github.com/REMnux). We also make use of the [FlareVM](https://github.com/fireeye/flare-vm) 
-
 
 ## Tools
 If you'd rather install the tools on a different environment, here is a list of the tools we used:
@@ -195,7 +191,6 @@ If you'd rather install the tools on a different environment, here is a list of 
 
 ## Maldocs
 You can find the maldocs we used in this tutorial in this repo.
-
 
 ## Disclaimer
 We created this tutorial as part of our paper submitted to **coming soon**.
