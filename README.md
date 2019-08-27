@@ -17,7 +17,7 @@ You can use the following command:
 pdfid adobe_collectemailinfo.pdf
 ```
 The scanning results shows that the file has 6 objects, 1 stream, 1 page, 1 /JS, 1 obfuscated /JavaScript and 1 /Openaction action.
-We can move to the PDFStreamDumper tool to further inveistigate.
+We can move to the PDFStreamDumper tool to further investigate.
 At a glance, object colours tell us the following:
 object 1 (green) contains /Launch, /OpenAction or /AA
 Object 5 (red) contains JavaScript.
@@ -26,11 +26,11 @@ You can find the full details of the colours and their meaning under
 
 Click on Object 5: "**5 HLen: 0x3A**", then click on the "**HexDump**" tab. Notice the obfuscation employed by the maldoc author. Hex digits are used to hide the JavaScript tag.
 Now click on Object 6, which contains the stream. Click the "**Text**" tab. 
-You can see some very suspicious obfuscated and encoded string. Let's invistigate further.
+You can see some very suspicious obfuscated and encoded string. Let's investigate further.
 Click on the "**Javascript_UI**" from the menu bar. A new window will launch that looks slightly better but still highly unreadable.
 Now click on "**Format_Javascript**".
 
-Typically, you will want to deobfuscate the JavaScript code to find out what it does. However, in this case, we can skip this step because there are 2 very clear indicators of malicious content:
+Typically, you will want to deobfuscate the JavaScript code to find out what it does. However, in this case, we can skip this step because there are 2 clear indicators of malicious content:
 The *unescape* function, followed by a Unicode-encoded string (*%uxxxx*)
 
 Highlight the whole purple string then click click on "**Shellcode_Analysis**". Pick the 2nd option from the dropdown menu: "**scDbg (libEmu - Emulation)**"
@@ -40,8 +40,8 @@ The emulation results show that the shellcode attempted to initiate a network co
 
 The analysis of this maldoc is now complete. 
 
-You might encounter some JavaScript blocks that do not execute directly and might require some editting, such as the analysis traps we highlighted in our paper. 
-Also, some JavaScript blocks will not reveal the shellcode directly. You will have to modify then execute the code in order to reveal subsequent attack stages which contain the final payload/shellcode.
+You might encounter some JavaScript blocks that do not execute directly and might require some editing, such as the analysis traps we highlighted in our paper. 
+Also, some JavaScript blocks will not reveal the shellcode directly. You will have to modify then execute the code to reveal subsequent attack stages which contain the final payload/shellcode.
 
 
 ### EmbeddedFiles analysis
@@ -49,7 +49,7 @@ There are 2 ways in which you can generate a *dropper* on Metasploit:
 - Executable dropping through JavaScript, which uses the module: "*adobe_pdf_embedded_exe*".
 - Executable dropping without JavaScript,  which uses the module: "*adobe_pdf_embedded_exe_nojs"*.
 
-In this section, we'll analyze a sample of both files.
+In this section, we'll analyse a sample of both files.
 
 #### Adobe_pdf_embedded_exe
 Let's start this analysis with PeePDF.
@@ -62,7 +62,7 @@ The scanning results show several red flags:
 - Launch (object 10)
 - EmbeddedFiles (object 5)
 
-Time to invistigate all these objects to see what they do: object 1, 3, 5, 9, 10.
+Time to investigate all these objects to see what they do: object 1, 3, 5, 9, 10.
 Lets start the interactive console of PeePDF using:
 ```
 peepdf adobe_pdf_embedded_exe.pdf -i
@@ -77,31 +77,31 @@ This returns the following:
  /Names 5 0 R
  /Type /Catalog >>
 
-The content of object 1 show that object 9 will be executed once the document is opened. We know object 9 contains a JavaScript block from the previous step.
+The content of object 1 shows that object 9 will be executed once the document is opened. We know object 9 contains a JavaScript block from the previous step.
 Let's check object 9
 ```
 object 9
 ```
-`object 9` returns 3 lines. The first line suggest that this object type is "Action", which means it is something that will be performed or executed by the reader.
+`object 9` returns 3 lines. The first line suggests that this object type is "Action", which means it is something that will be performed or executed by the application.
 > << /Type /Action
 
-The second line suggest that is object is a script, of the type "JavaScript. 
+The second line suggests that this object is a script, of the type "JavaScript. 
 > /S /JavaScript
 
 The 3rd line provides the JavaScript code:
 > /JS this.exportDataObject({ cName: "template", nLaunch: 0 }); >>
 
-This suggests the code will export something to the user's computer. The *dropped* file name is *template*, and uses 0 as a launch option, which means the file will not be executed once it is saved to the disk.
+This suggests the code will export something to the user's computer. The *dropped* filename is *template*, and uses 0 as a launch option, which means the file will not be executed once it is saved to the disk.
 
-Let's try and find out what the dropped file does. Seems like it is a good time to check object 5 with `object 5`, which shows
+Let's try and find out what the dropped file does. It seems like it is a good time to check object 5 with `object 5`, which shows
 > << /EmbeddedFiles 6 0 R >>
 
 Let's follow the chain: type  `object 6` in the console:
 > << /Names [ template 7 0 R ] >>
 
-BINGO! This is a "*names dictionary*" which is used to give a name to object 7, which is now called *template*. Now we know that the JavaScript code will save he content of object 7 to the disk. Let's check what object 7 has in store for us! Type `object 7`
+BINGO! This is a "*names dictionary*" which is used to give a name to object 7, which is now called *template*. Now we know that the JavaScript code will save the content of object 7 to the disk. Let's check what object 7 has in store for us! Type `object 7`
 
-This returns several lines, including the file type of the dropped file, which is another PDF document. The last line suggest the content can be found in object 8. Type `object 8`
+This returns several lines, including the file type of the dropped file, which is another PDF document. The last line suggests the content can be found in object 8. Type `object 8`
 
 Oops! This object contains some encoded string and what looks like a help message of a program. Make a note of the first few lines of the object:
 > << /Length 44156
@@ -114,7 +114,7 @@ object 8 $> var_a
 ```
 This command saves the content of object 8 into a new variable we called "*var_a*". Now type `help` to see if there are any commands that might help us identify this.
 
-To check the content of the variable, type `show var_a`, which returns a hex view of the content. We can try and scroll up to inspect the header of this file, but the content is too large for the console. Let's save it to the disk using it's original format before encoding. Type:
+To check the content of the variable, type `show var_a`, which returns a hex view of the content. We can try and scroll up to inspect the header of this file, but the content is too large for the console. Let's save it to the disk using its original format before encoding. Type:
 ```
 rawstream 8 $> var_b
 ```
@@ -124,18 +124,18 @@ decode variable var_b fl  > outputfile
 ```
 This should have decoded the rawstream then saved it to the same directory where the original PDF file is. 
 
-Keep the interactive console running, and start a new terminal. Navigate to where the new file is saved. Let's check out the file type. Type:
+Keep the interactive console running and start a new terminal. Navigate to where the new file is saved. Let's check out the file type. Type:
 ``` file outputfile```
 This returns:
 > outputfile: PE32 executable (GUI) Intel 80386, for MS Windows
 
-This is an excutable. So why did the file specification suggest it was a PDF? This is a trick applied by maldoc writers to bypass Adobe security settings that prevent a PDF document from dropping or saving an executable to the user's disk.
-You can use IDA pro or another debugger to invistigate what this executable does. However, seeing as this is out of scope, we'll leave this step to you to figure out.
+This is an executable. So why did the file specification suggest it was a PDF? This is a trick applied by maldoc writers to bypass Adobe security settings that prevent a PDF document from dropping or saving an executable to the user's disk.
+You can use IDA pro or another debugger to investigate what this executable does. However, seeing as this is out of scope, we'll leave this step to you to figure out.
 
 Our analysis is not complete. We know there is an embeddedfile that gets saved to the disk by the JavaScript code, but we also know the code does not run the dropped file. There must be another way. Let's keep looking. 
 
-Type `info` to check the basic scanning info again.
-We are yet to invistigate the /AA (AdditionalAction) in object 3. Type: `object 3`. 
+Type `info` to recheck the basic scanning info.
+We are yet to investigate the /AA (AdditionalAction) in object 3. Type: `object 3`. 
 
 This suggests that there is an additional action that takes place *after* the previous steps. The executed action is in object 10, which contains the "*Launch*" action.
 A *Launch* action will start a program on the user's computer when it gets executed. Let's check it out: `object 10`.
@@ -145,7 +145,7 @@ This launches a command lime interface and types the following command:
 
 > To view the encrypted content please tick the "Do not show this message again" box and press Open. >> >>
 
-This command attempts to locate te dropped PDF file then execute it.
+This command attempts to locate the dropped PDF file then execute it.
 
 The analysis of this maldoc is now complete. You can type `exit` to leave the interactive console and return to the terminal.
 
@@ -154,17 +154,17 @@ Let's start our analysis in this step using the interactive console of PeePDF:
 ```
 peepdf adobe_pdf_embedded_exe_nojs.pdf -i
 ```
-The results show a launch action and openAction, but no other indicators of malicious content. Also, the file is very small with only 5 objects, and no streams. Something does not look right, specially that the file size is nearly 300kb, so it must have some content.
+The results show a launch action and openAction, but no other indicators of malicious content. Also, the file is very small, with only 5 objects, and no streams. Something does not look right, especially that the file size is nearly 300kb, so it must have some content.
 
-Type `metadata` to inspect the metadata of the file. No results are returned. Type `tree` to inspect the hierarchical structure of the document. Once again, no indicator of content. Let's inspect those suspicious elements. Type `object 1`. We can see object 5 will be executed when the documen is opened. Let's inspect that with `object 5`. 
+Type `metadata` to inspect the metadata of the file. No results are returned. Type `tree` to inspect the hierarchical structure of the document. Once again, no indicator of content. Let's inspect those suspicious elements. Type `object 1`. We can see that object 5 will be executed when the document is opened. Let's inspect that with `object 5`. 
 
-We can see a lanuch action that will start a command line interface and type a very long and complicated command. 
+We can see a launch action that will start a command-line interface and type a very long and complicated command. 
 
-The command seems to be retrieving some data from the document itself using a Visual Basic script. As inspecting the lecgical structure did not reveal any content, it is time we ispect the physical structure of the document. Type `offsets`.
+The command seems to be retrieving some data from the document itself using a Visual Basic script. As inspecting the logical structure did not reveal any content, it is time we inspect the physical structure of the document — type `offsets`.
 
-The results show that the header is at offset 0 - as it should be. However, object 1 does not start until offset 295,220. This is the size in bytes. Which nearly equals the size of the entire document. This suggests that there is something embedded between the header and the first object. The easiest way to ispect this is to use a hex viewer. Launch your favorite hex viewer and inspect the document.
+The results show that the header is at offset 0 - as it should be. However, object 1 does not start until the offset 295,220. This is the size in bytes. Which nearly equals the size of the entire document. This suggests that there is something embedded between the header and the first object. The easiest way to inspect this is to use a hex viewer. Launch your favourite hex viewer and inspect the document.
 
-You can clearly see a massive hexadecimal string right after the header of the file. Highlight the string, upto the declaration of the first object "1 0 obj<<". Now copy the string into a new file. 
+You can see a massive hexadecimal string right after the header of the file. Highlight the string, up to the declaration of the first object "1 0 obj<<". Now copy the string into a new file. 
 
 The hexadecimal string can be converted into a binary using a short script (Perl or Python will do).
 
@@ -200,7 +200,7 @@ You can find the maldocs we used in this tutorial in this repo.
 ## Disclaimer
 We created this tutorial as part of our paper submitted to **coming soon**.
 
-The work contains malicious file secured using the industry-standard password. Use at your own risk. We are not responsible for any damage caused through the misuse of these maldocs.
+The work contains malicious file secured using the industry-standard password. Use at your own risk. We are not responsible for any damage caused by the misuse of these maldocs.
 
 
 
